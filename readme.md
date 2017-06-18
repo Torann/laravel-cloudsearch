@@ -172,4 +172,4 @@ Once you have retrieved the results, you may display the results and render the 
 
 > This feature is experimental
 
-Laravel CloudSearch can support multiple languages by appending the language code to the index type, so when the system performs a search it will only look for data that is on in the current system locale suffixed index type. For this to work the model needs to use the `LaravelCloudSearch\Eloquent\Localized` trait or something similar to it and model needs to have the filed `locale`.
+Laravel CloudSearch can support multiple languages by appending the language code to the index type, so when the system performs a search it will only look for data that is on in the current system locale suffixed index type. For this to work the model needs to use the `LaravelCloudSearch\Eloquent\Localized` trait or something similar to it.
