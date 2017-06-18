@@ -13,7 +13,7 @@ return [
 
     'config' => [
         'endpoint' => env('CLOUDSEARCH_ENDPOINT'),
-        'region' => env('CLOUDSEARCH_REGION', 'us-east-1'),
+        'region' => env('CLOUDSEARCH_REGION'),
 
         'credentials' => [
             'key'      => env('AWS_KEY'),
@@ -32,7 +32,7 @@ return [
     |
     */
 
-    'domain_name' => 'lulebe-staging',
+    'domain_name' => 'you-domain',
 
     /*
     |--------------------------------------------------------------------------
@@ -44,31 +44,7 @@ return [
     */
 
     'fields' => [
-
-        // General
         'id' => 'literal',
-        'locale' => 'literal',
-        'category_id' => 'literal',
-        'status' => 'literal',
-        'slug' => 'literal',
-        'image_file_name' => 'literal',
-        'tags' => 'literal-array',
-
-        // Articles
-        'user_id' => 'literal',
-        'featured' => 'literal',
-        'title' => 'text',
-        'url' => 'literal',
-        'source' => 'text',
-        'excerpt' => 'text',
-
-        // Plants
-        'parent_id' => 'literal',
-        'name' => 'text',
-        'common_names' => 'text-array',
-        'botanical_name' => 'text',
-        'ph' => 'literal-array',
-        'zones' => 'literal-array',
     ],
 
     /*

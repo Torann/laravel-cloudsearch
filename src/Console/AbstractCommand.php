@@ -70,6 +70,7 @@ abstract class AbstractCommand extends Command
      * Get action argument.
      *
      * @param  array $validActions
+     *
      * @return array
      */
     protected function getActionArgument($validActions = [])
@@ -92,8 +93,8 @@ abstract class AbstractCommand extends Command
     {
         $models = explode(',', preg_replace('/\s+/', '', $this->argument('model')));
 
-        return array_map(function($model) {
-            $model = array_map(function($m) {
+        return array_map(function ($model) {
+            $model = array_map(function ($m) {
                 return Str::studly($m);
             }, explode('\\', $model));
 
@@ -143,6 +144,7 @@ abstract class AbstractCommand extends Command
      * Validate model.
      *
      * @param  string $model
+     *
      * @return bool
      */
     protected function validateModel($model)

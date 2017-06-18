@@ -53,6 +53,8 @@ A configuration file will be publish to `config/cloud-search.php`.
 
 The better help manage fields, the package ships with a simple field management command. This is completely optional, as you can manage them in the AWS console.
 
+> **NOTE:** If you choose not to use this command to manage or setup your fields, you will still need to add the field `searchable_type` as a `literal`. This is used to store the model type.
+
 They can be found in the `config/cloud-search.php` file under the `fields` property:
 
 ```php

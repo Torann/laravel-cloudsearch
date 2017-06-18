@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelCloudSearch;
+namespace LaravelCloudSearch\Query;
 
 use Closure;
 use Exception;
@@ -304,7 +304,7 @@ class StructuredSearch
      * @param string $method
      * @param array  $args
      *
-     * @return StructuredQueryBuilder
+     * @return self
      * @throws Exception
      */
     public function __call($method, $args)

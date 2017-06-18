@@ -7,11 +7,13 @@ use ReflectionMethod;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
+use LaravelCloudSearch\Query\Builder;
 use Aws\CloudSearch\CloudSearchClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Aws\CloudSearchDomain\CloudSearchDomainClient;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use LaravelCloudSearch\Query\StructuredQueryBuilder;
 use Aws\CloudSearchDomain\Exception\CloudSearchDomainException;
 
 class CloudSearcher
@@ -74,7 +76,7 @@ class CloudSearcher
             $payload->push([
                 'type' => 'add',
                 'id' => $model->getSearchableId(),
-                'fields' => array_map(function($value) {
+                'fields' => array_map(function ($value) {
                     return is_null($value) ? '' : $value;
                 }, $fields),
             ]);
@@ -128,19 +130,15 @@ class CloudSearcher
      *
      * @param string $term
      * @param int    $perPage
-     * @param array  $options
      *
      * @return LengthAwarePaginator|array
      */
-    public function quickSearch($term, $perPage = 10, array $options = [])
+    public function searchAll($term, $perPage = 15)
     {
-        $results = $this->performSearch($term, array_merge([
-            'size' => $perPage,
-        ], $options));
-
-        return Arr::get($options, 'group', false)
-            ? $this->groupResults($results)
-            : $results;
+        return $this->newQuery()
+            ->term($term)
+            ->take($perPage)
+            ->get();
     }
 
     /**
@@ -190,6 +188,7 @@ class CloudSearcher
         }
         catch (CloudSearchDomainException $e) {
             dd($e->getAwsErrorMessage() ?: $e->getMessage());
+
             return $e->getAwsErrorMessage() ?: $e->getMessage();
         }
     }
@@ -211,30 +210,12 @@ class CloudSearcher
     }
 
     /**
-     * Group Elasticsearch results by table name.
-     *
-     * @param Collection $results
-     *
-     * @return array
-     */
-    protected function groupResults(Collection $results)
-    {
-        $groups = [];
-
-        $results->each(function ($item) use (&$groups) {
-            $groups[$item->getTable()][] = $item;
-        });
-
-        return $groups;
-    }
-
-    /**
      * Paginate the given query into a simple paginator.
      *
      * @param Result $result
-     * @param int   $page
-     * @param int   $perPage
-     * @param array $append
+     * @param int    $page
+     * @param int    $perPage
+     * @param array  $append
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
@@ -446,7 +427,7 @@ class CloudSearcher
             $this->searchClient = new CloudSearchClient([
                 'region' => $this->config('config.region'),
                 'credentials' => $this->config('config.credentials'),
-                'version'  => $this->config('config.version'),
+                'version' => $this->config('config.version'),
             ]);
         }
 
@@ -456,10 +437,10 @@ class CloudSearcher
     /**
      * Create a new query builder instance.
      *
-     * @return StructuredQueryBuilder
+     * @return Builder
      */
     public function newQuery()
     {
-        return new StructuredQueryBuilder;
+        return new Builder($this);
     }
 }

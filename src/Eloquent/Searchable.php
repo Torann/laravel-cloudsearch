@@ -2,6 +2,7 @@
 
 namespace LaravelCloudSearch\Eloquent;
 
+use LaravelCloudSearch\Query\Builder;
 use LaravelCloudSearch\CloudSearcher;
 
 trait Searchable
@@ -56,11 +57,27 @@ trait Searchable
     /**
      * Perform a search against the model's indexed data.
      *
-     * @return \LaravelCloudSearch\Builder
+     * @param string $query
+     *
+     * @return \LaravelCloudSearch\Query\Builder
      */
-    public static function search()
+    public static function search($query)
     {
-        return new Builder(new static);
+        return self::searchBuilder()->term($query);
+    }
+
+    /**
+     * Get the search builder instance.
+     *
+     * @return \LaravelCloudSearch\Query\Builder
+     */
+    public static function searchBuilder()
+    {
+        $instance = new static();
+
+        $builder = new Builder($instance->getCloudSearch());
+
+        return $builder->searchableType($instance);
     }
 
     /**

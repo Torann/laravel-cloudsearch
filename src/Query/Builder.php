@@ -1,29 +1,46 @@
 <?php
 
-namespace LaravelCloudSearch\Eloquent;
+namespace LaravelCloudSearch\Query;
 
 use Closure;
-use LaravelCloudSearch\StructuredQueryBuilder;
+use LaravelCloudSearch\CloudSearcher;
 
 class Builder
 {
     /**
-     * The model instance.
+     * Cloud searcher instance.
      *
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var \LaravelCloudSearch\CloudSearcher
      */
-    public $model;
+    public $cloudSearcher;
 
     /**
      * Create a new search builder instance.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \LaravelCloudSearch\CloudSearcher $cloudSearcher
      */
-    public function __construct($model)
+    public function __construct(CloudSearcher $cloudSearcher)
     {
-        $this->model = $model;
+        $this->cloudSearcher = $cloudSearcher;
+        $this->builder = new StructuredQueryBuilder();
+    }
 
-        $this->builder = new StructuredQueryBuilder($this);
+    /**
+     * Set the searchable type.
+     *
+     * @param mixed $type
+     *
+     * @return self
+     */
+    public function searchableType($type)
+    {
+        if (is_object($type)) {
+            $type = get_class($type);
+        }
+
+        $this->phrase($type, 'searchable_type');
+
+        return $this;
     }
 
     /**
@@ -529,6 +546,6 @@ class Builder
      */
     protected function cloudSearch()
     {
-        return $this->model->getCloudSearch();
+        return $this->cloudSearcher;
     }
 }

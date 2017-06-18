@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelCloudSearch;
+namespace LaravelCloudSearch\Query;
 
 class StructuredQueryBuilder
 {
@@ -135,7 +135,7 @@ class StructuredQueryBuilder
      *
      * @param string $cursor
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function cursor($cursor = 'initial')
     {
@@ -152,7 +152,7 @@ class StructuredQueryBuilder
      * @param string $accessor
      * @param string $expression
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function expr($accessor, $expression)
     {
@@ -180,7 +180,7 @@ class StructuredQueryBuilder
      * @param string  $sort
      * @param integer $size
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function facet($field, $sort = "bucket", $size = 10)
     {
@@ -205,7 +205,7 @@ class StructuredQueryBuilder
      * @@param array $buckets
      * @param string $method
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function facetBuckets($field, $buckets, $method = "filter")
     {
@@ -233,7 +233,7 @@ class StructuredQueryBuilder
      * @param string $key
      * @param mixed  $value
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function options($key, $value)
     {
@@ -254,7 +254,7 @@ class StructuredQueryBuilder
      *
      * @param string $returnFields
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function returnFields($returnFields)
     {
@@ -268,7 +268,7 @@ class StructuredQueryBuilder
      *
      * @param integer $size
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function size($size)
     {
@@ -291,7 +291,7 @@ class StructuredQueryBuilder
      * @param string $field
      * @param string $direction
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function sort($field, $direction = 'asc')
     {
@@ -307,7 +307,7 @@ class StructuredQueryBuilder
      *
      * @param integer $start
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function start($start)
     {
@@ -331,7 +331,7 @@ class StructuredQueryBuilder
      *
      * @param string $field
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function stats($field)
     {
@@ -348,7 +348,7 @@ class StructuredQueryBuilder
      * @param integer $radius
      * @param boolean $addExpr
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function latlon($field, $lat, $lon, $radius = 50, $addExpr = false)
     {
@@ -378,7 +378,7 @@ class StructuredQueryBuilder
      * @param string $lat
      * @param string $lon
      *
-     * @return StructuredQueryBuilder
+     * @return self
      */
     public function addDistanceExpr($field, $lat, $lon)
     {
