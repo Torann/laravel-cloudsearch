@@ -168,6 +168,49 @@ Once you have retrieved the results, you may display the results and render the 
 {{ $posts->links() }}
 ```
 
+## Basic Builder Usage
+
+Initialize a builder instance:
+
+```php
+$query = app(\LaravelCloudSearch\CloudSearcher::class)->newQuery();
+```
+
+You can chain query methods like so:
+
+```php
+$query->phrase('ford')
+    ->term('National Equipment', 'seller')
+    ->range('year', '2010');
+```
+
+use the `get()` or `paginate()` methods to submit query and retrieve results from AWS.
+
+```php
+$results = $query->get();
+```
+
+In the example above we did not set the search type, so this means the results that are returned will match any document on CloudSearch domain. To refine you search to certain model, either use the model like shown in the example previously or use the `searchableType()` method to set the class name of the model (this is done automatically in the model instance call):
+
+```php
+$query = app(\LaravelCloudSearch\CloudSearcher::class)->newQuery();
+
+$results = $query->searchableType(\App\LawnMower::class)
+    ->term('honda', 'name')
+    ->get();
+```
+
+### Search Query Operators and Nested Queries
+
+You can use the `and`, `or`, and `not` operators to build compound and nested queries. The corresponding `and()`, `or()`, and `not()` methods expect a closure as their argument. You can chain all available methods as well nest more sub-queries inside of closures.
+
+```php
+$query->or(function($builder) {
+    $builder->phrase('ford')
+        ->phrase('truck');
+});
+```
+
 ## Multilingual
 
 > This feature is experimental
