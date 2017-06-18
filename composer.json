@@ -1,0 +1,36 @@
+{
+  "name": "torann/laravel-cloudsearch",
+  "type": "library",
+  "description": "Index and search Laravel models on Amazon's CloudSearch.",
+  "keywords": [
+    "cloudsearch",
+    "aws",
+    "amazon cloudsearch",
+    "eloquent",
+    "laravel",
+    "search"
+  ],
+  "homepage": "https://github.com/Torann/laravel-cloudsearch",
+  "license": "BSD 2-Clause",
+  "authors": [
+    {
+      "name": "Daniel Stainback",
+      "email": "torann@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.4",
+    "illuminate/support": "~5.4",
+    "illuminate/config": "~5.4",
+    "aws/aws-sdk-php": "~3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.2|~5.0",
+    "mockery/mockery": "^0.9.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "LaravelCloudSearch\\": "src/"
+    }
+  }
+}
