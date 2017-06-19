@@ -21,7 +21,9 @@ trait Searchable
      */
     public static function bootSearchable()
     {
-        static::observe(Observer::class);
+        if (config('cloud-search.enabled', true)) {
+            static::observe(Observer::class);
+        }
     }
 
     /**
@@ -42,16 +44,6 @@ trait Searchable
     public function removeFromCloudSearch()
     {
         return $this->getCloudSearch()->remove($this);
-    }
-
-    /**
-     * Get the CloudSearcher index name for the model.
-     *
-     * @return string
-     */
-    public function getCloudSearchIndex()
-    {
-        return $this->getTable();
     }
 
     /**
