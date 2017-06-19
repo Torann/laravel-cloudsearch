@@ -4,6 +4,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | CloudSearch State
+    |--------------------------------------------------------------------------
+    |
+    | This is here to help with local development. It can be a little tough
+    | working with CloudSearch on a local machine.
+    */
+
+    'enabled' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Custom CloudSearch Client Configuration
     |--------------------------------------------------------------------------
     |
