@@ -53,10 +53,16 @@ abstract class AbstractCommand extends Command
 
                 // Perform action
                 if (empty($locales) === false && method_exists($instance, 'getLocalizedSearchableId')) {
-                    foreach ($locales as $locale) {
-                        $this->setSystemLocale($locale);
 
-                        $this->$action($instance);
+                    // Process each locale using the by locale macro
+                    foreach ($locales as $locale) {
+
+                        $this->line("\nIndexing locale: <info>{$locale}</info>");
+
+                        $this->$action(
+                            $instance->byLocale($locale),
+                            $model
+                        );
                     }
                 }
                 else {
@@ -115,29 +121,11 @@ abstract class AbstractCommand extends Command
         }
 
         // Check for package
-        if (class_exists('Torann\\Localization\\LocaleManager')) {
+        if (class_exists('\\Torann\\Localization\\LocaleManager')) {
             return app(LocaleManager::class)->getSupportedLanguagesKeys();
         }
 
         return config('cloud-search.support_locales');
-    }
-
-    /**
-     * Get an array of supported locales.
-     *
-     * @param string $locale
-     */
-    protected function setSystemLocale($locale)
-    {
-        $this->line('');
-        $this->line("System local set to: <info>{$locale}</info>");
-
-        if (class_exists('Torann\\Localization\\LocaleManager')) {
-            app(LocaleManager::class)->setLocale($locale);
-        }
-        else {
-            app()->setLocale($locale);
-        }
     }
 
     /**

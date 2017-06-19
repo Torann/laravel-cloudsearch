@@ -26,7 +26,24 @@ class LocalizedScope implements Scope
      */
     public function extend(Builder $builder)
     {
+        $this->addByLocale($builder);
         $this->addWithoutLocalization($builder);
+    }
+
+    /**
+     * Add the by locale extension to the builder.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @return void
+     */
+    public function addByLocale(Builder $builder)
+    {
+        $builder->macro('byLocale', function (Builder $builder, $locale) {
+
+            $builder->withoutGlobalScope($this);
+
+            return $builder->where($builder->getModel()->getTable() . '.locale', $locale);
+        });
     }
 
     /**
