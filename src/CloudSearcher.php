@@ -75,7 +75,7 @@ class CloudSearcher
             // Add to the payload
             $payload->push([
                 'type' => 'add',
-                'id' => $model->getSearchableId(),
+                'id' => $this->getSearchDocumentId($model),
                 'fields' => array_map(function ($value) {
                     return is_null($value) ? '' : $value;
                 }, $fields),
@@ -115,7 +115,7 @@ class CloudSearcher
             $payload->push([
                 'type' => 'delete',
                 'version' => 1,
-                'id' => $model->getSearchableId(),
+                'id' => $this->getSearchDocumentId($model),
             ]);
         });
 
@@ -250,7 +250,7 @@ class CloudSearcher
         if (!($model = Arr::pull($attributes, 'searchable_type'))) return null;
 
         // Set type
-        $attributes['result_type'] = basename(str_replace('\\', '/', strtolower($model)));
+        $attributes['result_type'] = $this->getClassBasename($model);
 
         // Create model instance from type
         return $this->newFromBuilderRecursive(new $model, $attributes);
@@ -390,6 +390,19 @@ class CloudSearcher
     }
 
     /**
+     * Create a document ID for Laravel CloudSearch using the searchable ID and
+     * the class name of the model.
+     *
+     * @param Model $model
+     *
+     * @return string
+     */
+    protected function getSearchDocumentId(Model $model)
+    {
+        return $this->getClassBasename($model) . '-' . $model->getSearchableId();
+    }
+
+    /**
      * Get configuration value.
      *
      * @param string $key
@@ -432,6 +445,20 @@ class CloudSearcher
         }
 
         return $this->searchClient;
+    }
+
+    /**
+     * Get the class "basename" of the given object / class.
+     *
+     * @param string|object $class
+     *
+     * @return string
+     */
+    protected function getClassBasename($class)
+    {
+        $class = is_object($class) ? get_class($class) : $class;
+
+        return basename(str_replace('\\', '/', strtolower($class)));
     }
 
     /**
