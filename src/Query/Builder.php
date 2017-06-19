@@ -38,7 +38,28 @@ class Builder
             $type = get_class($type);
         }
 
+        // Set the search type
         $this->phrase($type, 'searchable_type');
+
+        // Set locale
+        if (method_exists($type, 'getLocalizedSearchableId')) {
+            $this->byLocale();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the locale to use for searching.
+     *
+     * @param string $locale
+     *
+     * @return self
+     */
+    public function byLocale($locale = null)
+    {
+        // Use the current system locale if one is not set
+        $this->phrase($locale ?: app()->getLocale(), 'locale');
 
         return $this;
     }
