@@ -232,7 +232,7 @@ $query->or(function($builder) {
 
 ## Queue
 
-The help reduce the number of bulk requests made to the CloudSearch endpoint a queue system is used (because they cost over time). This can be set in Laravel [Task Scheduling](https://laravel.com/docs/5.4/scheduling). You can decide how often it is ran using the scheduled task frequency options. Please note this uses the DB to function.
+The help reduce the number of bulk requests made to the CloudSearch endpoint (because they cost) a queue system is used. This can be set in Laravel [Task Scheduling](https://laravel.com/docs/5.4/scheduling). You can decide how often it is ran using the scheduled task frequency options. Please note this uses the DB to function.
 
 Example of the task added to `/app/Console/Kernel.php`:
 
