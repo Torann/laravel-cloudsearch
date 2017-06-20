@@ -74,17 +74,12 @@ class CloudSearcher
     /**
      * Add/Update the given models in the index.
      *
-     * @param mixed $models
+     * @param Collection $models
      *
      * @return array
      */
-    public function update($models)
+    public function update(Collection $models)
     {
-        // Ensure it's a collection
-        $models = $models instanceof Model
-            ? new Collection([$models])
-            : $models;
-
         $payload = new Collection();
 
         $models->each(function ($model) use ($payload) {
@@ -108,21 +103,25 @@ class CloudSearcher
     /**
      * Remove from search index
      *
-     * @param mixed $ids
+     * @param Collection $entries
      *
      * @return array
      */
-    public function delete($ids)
+    public function delete(Collection $entries)
     {
         $payload = new Collection();
 
         // Add to the payload
-        foreach((array) $ids as $search_document_id) {
+        $entries->each(function ($model) use ($payload) {
+            $search_document_id = $model instanceof Model
+                ? $this->getSearchDocumentId($model)
+                : $model;
+
             $payload->push([
                 'type' => 'delete',
                 'id' => $search_document_id,
             ]);
-        }
+        });
 
         return $this->domainClient()->uploadDocuments([
             'documents' => json_encode($payload->all()),
