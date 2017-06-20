@@ -80,4 +80,16 @@ return [
 
     'support_locales' => [],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Batching
+    |--------------------------------------------------------------------------
+    |
+    | In this section we can customize a few of the settings that in the long
+    | run could save us some money.
+    |
+    */
+
+    'batching_size' => 100,
+
 ];

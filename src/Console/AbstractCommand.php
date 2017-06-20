@@ -22,6 +22,11 @@ abstract class AbstractCommand extends Command
     protected $models;
 
     /**
+     * @var int
+     */
+    protected $batching_size = 100;
+
+    /**
      * Create a new console command instance.
      *
      * @param CloudSearcher $cloudSearcher
@@ -31,6 +36,8 @@ abstract class AbstractCommand extends Command
         parent::__construct();
 
         $this->cloudSearcher = $cloudSearcher;
+        $this->batching_size = $cloudSearcher->config('batching_size', 100);
+
         $this->models = config('cloud-search.model_namespace', '\\App');
     }
 
