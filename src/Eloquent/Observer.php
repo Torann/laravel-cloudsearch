@@ -21,7 +21,7 @@ class Observer
      */
     public function deleted($model)
     {
-        $model->removeFromCloudSearch();
+        $model->deleteFromCloudSearch();
     }
 
     /**

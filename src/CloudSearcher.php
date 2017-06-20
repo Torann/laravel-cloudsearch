@@ -95,7 +95,7 @@ class CloudSearcher
      *
      * @return array
      */
-    public function remove($models)
+    public function delete($models)
     {
         // Ensure it's a collection
         $models = $models instanceof Model
