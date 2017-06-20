@@ -44,7 +44,7 @@ class IndexCommand extends AbstractCommand
     {
         $this->getOutput()->write("Indexing [{$name}]");
 
-        $builder->chunk(100, function ($models) use (&$total) {
+        $builder->chunk($this->batching_size, function ($models) use (&$total) {
             $this->cloudSearcher->update($models);
             $this->getOutput()->write(str_repeat('.', $models->count()));
         });

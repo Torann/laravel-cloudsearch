@@ -44,7 +44,7 @@ class FlushCommand extends AbstractCommand
     {
         $this->getOutput()->write("Flushing [{$name}]");
 
-        $builder->chunk(100, function ($models) {
+        $builder->chunk($this->batching_size, function ($models) {
             $this->cloudSearcher->delete($models);
             $this->getOutput()->write(str_repeat('.', $models->count()));
         });

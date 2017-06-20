@@ -29,21 +29,22 @@ trait Searchable
     /**
      * Dispatch the job to make the model searchable.
      *
-     * @return array
+     * @return bool
      */
     public function addToCloudSearch()
     {
-        return $this->getCloudSearch()->update($this);
+        return $this->getCloudSearch()->queue('update', $this);
+
     }
 
     /**
      * Dispatch the job to make the model unsearchable.
      *
-     * @return array
+     * @return bool
      */
-    public function removeFromCloudSearch()
+    public function deleteFromCloudSearch()
     {
-        return $this->getCloudSearch()->remove($this);
+        return $this->getCloudSearch()->queue('delete', $this);
     }
 
     /**

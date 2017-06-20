@@ -7,18 +7,6 @@ use Illuminate\Support\ServiceProvider;
 class LaravelCloudSearchServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/cloud-search.php', 'cloud-search'
-        );
-    }
-
-    /**
      * Register services.
      *
      * @return void
@@ -29,19 +17,51 @@ class LaravelCloudSearchServiceProvider extends ServiceProvider
             return new CloudSearcher($app->config->get('cloud-search'));
         });
 
-        if ($this->app->runningInConsole()) {
-            if ($this->isLumen() === false) {
-                $this->publishes([
-                    __DIR__.'/../config/cloud-search.php' => config_path('cloud-search.php'),
-                ], 'config');
-            }
+        $this->app->singleton(Queue::class, function ($app) {
+            return new Queue($app['db']);
+        });
 
-            $this->commands([
-                Console\FieldsCommand::class,
-                Console\FlushCommand::class,
-                Console\IndexCommand::class,
-            ]);
+        if ($this->app->runningInConsole()) {
+            $this->registerResources();
+            $this->registerCommands();
         }
+    }
+
+    /**
+     * Register the resources.
+     *
+     * @return bool
+     */
+    protected function registerResources()
+    {
+        if ($this->isLumen() === false) {
+            $this->publishes([
+                __DIR__.'/../config/cloud-search.php' => config_path('cloud-search.php'),
+            ], 'config');
+
+            $this->mergeConfigFrom(
+                __DIR__.'/../config/cloud-search.php', 'cloud-search'
+            );
+        }
+
+        $this->publishes([
+            __DIR__ . '/../database/migrations' => base_path('/database/migrations'),
+        ], 'migrations');
+    }
+
+    /**
+     * Register all commands.
+     *
+     * @return void
+     */
+    public function registerCommands()
+    {
+        $this->commands([
+            Console\FieldsCommand::class,
+            Console\FlushCommand::class,
+            Console\IndexCommand::class,
+            Console\QueueCommand::class,
+        ]);
     }
 
     /**

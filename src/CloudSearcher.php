@@ -50,6 +50,28 @@ class CloudSearcher
     }
 
     /**
+     * Queue the given model action.
+     *
+     * @param string $action
+     * @param Model  $model
+     *
+     * @return bool
+     */
+    public function queue($action, Model $model)
+    {
+        switch($action) {
+            case 'update':
+                return $this->searchQueue()->push('update', $model->getKey(), get_class($model));
+                break;
+            case 'delete':
+                return $this->searchQueue()->push('delete', $this->getSearchDocumentId($model), get_class($model));
+                break;
+        }
+
+        return false;
+    }
+
+    /**
      * Add/Update the given models in the index.
      *
      * @param mixed $models
@@ -66,20 +88,15 @@ class CloudSearcher
         $payload = new Collection();
 
         $models->each(function ($model) use ($payload) {
-
-            // Get document and skip empties
-            if (empty($fields = $this->getSearchDocument($model))) {
-                return null;
+            if ($fields = $this->getSearchDocument($model)) {
+                $payload->push([
+                    'type' => 'add',
+                    'id' => $this->getSearchDocumentId($model),
+                    'fields' => array_map(function ($value) {
+                        return is_null($value) ? '' : $value;
+                    }, $fields),
+                ]);
             }
-
-            // Add to the payload
-            $payload->push([
-                'type' => 'add',
-                'id' => $this->getSearchDocumentId($model),
-                'fields' => array_map(function ($value) {
-                    return is_null($value) ? '' : $value;
-                }, $fields),
-            ]);
         });
 
         return $this->domainClient()->uploadDocuments([
@@ -91,33 +108,21 @@ class CloudSearcher
     /**
      * Remove from search index
      *
-     * @param mixed $models
+     * @param mixed $ids
      *
      * @return array
      */
-    public function delete($models)
+    public function delete($ids)
     {
-        // Ensure it's a collection
-        $models = $models instanceof Model
-            ? new Collection([$models])
-            : $models;
-
         $payload = new Collection();
 
-        $models->each(function ($model) use ($payload) {
-
-            // Get document and skip empties
-            if (method_exists($this, 'getSearchDocument') === false) {
-                return null;
-            }
-
-            // Add to the payload
+        // Add to the payload
+        foreach((array) $ids as $search_document_id) {
             $payload->push([
                 'type' => 'delete',
-                'version' => 1,
-                'id' => $this->getSearchDocumentId($model),
+                'id' => $search_document_id,
             ]);
-        });
+        }
 
         return $this->domainClient()->uploadDocuments([
             'documents' => json_encode($payload->all()),
@@ -376,15 +381,13 @@ class CloudSearcher
      *
      * @param Model $model
      *
-     * @return array
+     * @return array|null
      */
     protected function getSearchDocument(Model $model)
     {
-        // Get indexable data from model
-        $data = $model->getSearchDocument();
-
-        // Append huntable type for polymorphic use
-        $data['searchable_type'] = get_class($model);
+        if ($data = $model->getSearchDocument()) {
+            $data['searchable_type'] = get_class($model);
+        }
 
         return $data;
     }
@@ -445,6 +448,16 @@ class CloudSearcher
         }
 
         return $this->searchClient;
+    }
+
+    /**
+     * Get the queue instance.
+     *
+     * @return Queue
+     */
+    public function searchQueue()
+    {
+        return app(Queue::class);
     }
 
     /**
