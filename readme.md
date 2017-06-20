@@ -49,7 +49,22 @@ $ php artisan vendor:publish --provider="LaravelCloudSearch\LaravelCloudSearchSe
 
 A configuration file will be publish to `config/cloud-search.php`.
 
-### Fields
+
+### Migration
+
+The package uses a batch queue system for updating the documents on AWS. This is done to help reduce the number of calls made to the API (will save money in the long run).
+
+```bash
+php artisan vendor:publish --provider="LaravelCloudSearch\LaravelCloudSearchServiceProvider" --tag=migrations
+```
+
+Run this on the command line from the root of your project to generate the table for storing currencies:
+
+```bash
+$ php artisan migrate
+```
+
+## Fields
 
 The better help manage fields, the package ships with a simple field management command. This is completely optional, as you can manage them in the AWS console.
 
@@ -90,9 +105,13 @@ Arguments:
  model               Name or comma separated names of the model(s) to index
 ```
 
+#### `search:queue`
+
+Reduces the number of calls made to the CloudSearch server by queueing the updates and deletes.
+
 ## Indexing
 
-Once you have added the `LaravelCloudSearch\Eloquent\Searchable` trait to a model, all you need to do is save a model instance and it will automatically be added to your index.
+Once you have added the `LaravelCloudSearch\Eloquent\Searchable` trait to a model, all you need to do is save a model instance and it will automatically be added to your index when the `search:queue` command is ran.
 
 ```php
 $post = new App\Post;
@@ -209,6 +228,26 @@ $query->or(function($builder) {
     $builder->phrase('ford')
         ->phrase('truck');
 });
+```
+
+## Queue
+
+The help reduce the number of bulk requests made to the CloudSearch endpoint a queue system is used (because they cost over time). This can be set in Laravel [Task Scheduling](https://laravel.com/docs/5.4/scheduling). You can decide how often it is ran using the scheduled task frequency options. Please note this uses the DB to function.
+
+Example of the task added to `/app/Console/Kernel.php`:
+
+```php
+    /**
+     * Define the application's command schedule.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
+     *
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('search:queue')->everyTenMinutes();
+    }
 ```
 
 ## Multilingual
