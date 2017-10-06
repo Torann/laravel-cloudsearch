@@ -85,9 +85,9 @@ They can be found in the `config/cloud-search.php` file under the `fields` prope
 
 Initialize an Eloquent model map.
 
-#### `search:import <model>`
+#### `search:index <model>`
 
-Import all the entries in an Eloquent model. This will also initialize the model's map if one is not already set.
+Name or comma separated names of the model(s) to index.
 
 Arguments:
 
