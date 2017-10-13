@@ -73,7 +73,7 @@ abstract class AbstractCommand extends Command
                     }
                 }
                 else {
-                    $this->$action($instance);
+                    $this->$action($instance, $model);
                 }
             }
         }
