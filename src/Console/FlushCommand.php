@@ -2,7 +2,7 @@
 
 namespace LaravelCloudSearch\Console;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class FlushCommand extends AbstractCommand
 {
@@ -35,16 +35,16 @@ class FlushCommand extends AbstractCommand
     /**
      * Index all model entries to ElasticSearch.
      *
-     * @param Builder $builder
-     * @param string  $name
+     * @param Model  $instance
+     * @param string $name
      *
      * @return bool
      */
-    protected function flush(Builder $builder, $name)
+    protected function flush(Model $instance, $name)
     {
         $this->getOutput()->write("Flushing [{$name}]");
 
-        $builder->chunk($this->batching_size, function ($models) {
+        $instance->chunk($this->batching_size, function ($models) {
             $this->cloudSearcher->delete($models);
             $this->getOutput()->write(str_repeat('.', $models->count()));
         });

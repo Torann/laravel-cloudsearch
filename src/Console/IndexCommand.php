@@ -2,7 +2,7 @@
 
 namespace LaravelCloudSearch\Console;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class IndexCommand extends AbstractCommand
 {
@@ -35,16 +35,16 @@ class IndexCommand extends AbstractCommand
     /**
      * Index all model entries to ElasticSearch.
      *
-     * @param Builder $builder
-     * @param string  $name
+     * @param Model  $instance
+     * @param string $name
      *
      * @return bool
      */
-    protected function index(Builder $builder, $name)
+    protected function index(Model $instance, $name)
     {
         $this->getOutput()->write("Indexing [{$name}]");
 
-        $builder->chunk($this->batching_size, function ($models) use (&$total) {
+        $instance->chunk($this->batching_size, function ($models) use (&$total) {
             $this->cloudSearcher->update($models);
             $this->getOutput()->write(str_repeat('.', $models->count()));
         });
